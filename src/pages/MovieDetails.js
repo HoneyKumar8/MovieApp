@@ -11,34 +11,38 @@ function MovieDetails() {
   const [cast, setCast] = useState([])
 
   useEffect(() => {
-    const movieResponse = fetchMovieDetails(id)
-    const castResponse = fetchMovieCredits(id)
+    const loadDetails = async () => {
+      try {
+        const movieData = await fetchMovieDetails(id)
+        const castData = await fetchMovieCredits(id)
 
-    if (movieResponse && typeof movieResponse.then === 'function') {
-      movieResponse.then(res => res.json()).then(data => setMovie(data))
-    } else {
-      setMovie(movieResponse)
+        setMovie(movieData)
+        setCast(castData.cast.slice(0, 12))
+      } catch (error) {
+        console.error(error)
+      }
     }
 
-    if (castResponse && typeof castResponse.then === 'function') {
-      castResponse
-        .then(res => res.json())
-        .then(data => setCast(data.cast || []))
-    } else {
-      setCast(castResponse.cast || [])
-    }
+    loadDetails()
   }, [id])
 
   if (!movie) return <h2>Loading...</h2>
 
   return (
-    <div>
+    <div className="movie-details">
       <h1>{movie.title}</h1>
 
-      <img src={IMG_URL + movie.poster_path} alt={movie.title} />
+      <img
+        src={
+          movie.poster_path
+            ? IMG_URL + movie.poster_path
+            : 'https://via.placeholder.com/300x450?text=No+Image'
+        }
+        alt={movie.title}
+      />
 
       <p>
-        <strong>Rating:</strong> {movie.vote_average}
+        <strong>Rating:</strong> ⭐ {movie.vote_average}
       </p>
       <p>
         <strong>Duration:</strong> {movie.runtime} mins
@@ -47,14 +51,25 @@ function MovieDetails() {
         <strong>Release Date:</strong> {movie.release_date}
       </p>
       <p>
+        <strong>Genres:</strong> {movie.genres?.map(g => g.name).join(', ')}
+      </p>
+      <p>
         <strong>Overview:</strong> {movie.overview}
       </p>
 
-      <h3>Cast</h3>
+      <h2>Cast</h2>
 
-      <div style={{display: 'flex', flexWrap: 'wrap'}}>
-        {cast.slice(0, 10).map(member => (
-          <div key={member.cast_id}>
+      <div className="cast-grid">
+        {cast.map(member => (
+          <div key={member.id} className="cast-card">
+            <img
+              src={
+                member.profile_path
+                  ? IMG_URL + member.profile_path
+                  : 'https://via.placeholder.com/150?text=No+Image'
+              }
+              alt={member.name}
+            />
             <p>{member.name}</p>
             <p>as {member.character}</p>
           </div>

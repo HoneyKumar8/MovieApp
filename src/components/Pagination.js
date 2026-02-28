@@ -1,17 +1,21 @@
-function Pagination({page, setPage}) {
+function Pagination({page, totalPages, setPage}) {
   return (
-    <div style={{marginTop: '20px'}}>
+    <div className="pagination">
       <button
         type="button"
-        onClick={() => setPage(page - 1)}
+        onClick={() => setPage(prev => prev - 1)}
         disabled={page === 1}
       >
         Prev
       </button>
 
-      <span style={{margin: '0 15px'}}>Page {page}</span>
+      <span className="page-number">Page {page}</span>
 
-      <button type="button" onClick={() => setPage(page + 1)}>
+      <button
+        type="button"
+        onClick={() => setPage(prev => prev + 1)}
+        disabled={page === totalPages}
+      >
         Next
       </button>
     </div>

@@ -11,7 +11,15 @@ function MovieCard({movie}) {
 
   return (
     <div className="movie-card">
-      <img src={IMG_URL + movie.poster_path} alt={movie.title} />
+      <img
+        src={
+          movie.poster_path
+            ? IMG_URL + movie.poster_path
+            : 'https://via.placeholder.com/300x450?text=No+Image'
+        }
+        alt={movie.title}
+      />
+
       <h3>{movie.title}</h3>
       <p>⭐ {movie.vote_average}</p>
 
